@@ -11,29 +11,22 @@ namespace Shaygan\TelegramBotApiBundle;
 use Symfony\Component\DependencyInjection\Container;
 use TelegramBot\Api\BotApi;
 
-class TelegramBotApi
+class TelegramBotApi extends BotApi
 {
-
-    private $telegram;
-    private $old_api;
-    private $config;
 
     public function __construct(Container $container)
     {
-        $this->config = $container->getParameter('shaygan_telegram_bot_api.config');
-
-        if ($this->config['legacy'] === false) {
-            $this->this->telegram = new \Longman\TelegramBot\Telegram($this->config['token'], $this->config['bot_name']);
-        } else {
-            $this->old_api = new BotApi($this->config['token']);
-        }
+        $token = $container->getParameter('shaygan_telegram_bot_api.config');
+//        var_dump($token);
+        parent::__construct($token['token']);
     }
 
-    public function __call($name, $arguments)
+    /**
+     * @param string $token
+     */
+    public function setToken($token)
     {
-        if ($this->config['legacy'] === true) {
-            call_user_method($name, $this->old_api, $arguments);
-        }
+        $this->token = $token;
     }
 
 }
